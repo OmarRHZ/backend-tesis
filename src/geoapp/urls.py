@@ -16,8 +16,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from biomass.api.views import *
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'change_password', ChangePasswordViewSet, basename="change-password")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('biomass.api.urls')),
+    path('api/biomass/', include('biomass.api.urls')),
+    path('api/user/register/', UserCreateView.as_view(), name='user-create'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token-obtain-pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
+    path('api-auth/', include('rest_framework.urls')),
+    path('accounts/', include('allauth.urls')),
+    path('callback/', google_login_callback, name='callback'),
+    path('api/auth/user/', UserDetailView.as_view(), name='user-detail'),
+    path('api/google/validate-token/', validate_google_token, name='validate-token'),
 ]
+
+urlpatterns += router.urls

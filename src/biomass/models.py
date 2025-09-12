@@ -8,14 +8,13 @@ class AOI(models.Model):
     file_path = models.TextField(blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     geometry = gis_models.PolygonField(null=True, blank=True, srid=4326)  # PostGIS field
+    task_id = models.CharField(max_length=250, null=True, blank=True)
 
 class BiomassStats(models.Model):
     aoi = models.ForeignKey(AOI, on_delete=models.CASCADE)
     year = models.SmallIntegerField()
-    total_mg = models.FloatField()
-    total_carbon = models.FloatField()
-    rmse_model = models.FloatField()
-    r2_model = models.FloatField()
+    mean_mg = models.FloatField()
+    mean_carbon = models.FloatField()
 
 class BiomassRaster(models.Model):
     aoi = models.ForeignKey(AOI, on_delete=models.CASCADE)

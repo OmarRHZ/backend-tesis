@@ -1,14 +1,18 @@
 from django.urls import path, include
 from .views import *
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'biomass-stats', BiomassStatsListView, basename='biomass-stats')
+router.register(r'aois', AOIListView, basename='aois')
 
 urlpatterns = [
-    path('user/register/', UserCreateView.as_view(), name='user-create'),
-    path('token/', TokenObtainPairView.as_view(), name='token-obtain-pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
-    path('api-auth/', include('rest_framework.urls')),
-    path('accounts/', include('allauth.urls')),
-    path('auth/user/', UserDetailView.as_view(), name='user-detail'),
-    path('callback/', google_login_callback, name='callback'),
-    path('google/validate-token/', validate_google_token, name='validate-token'),
+    path('analyze-geojson/', AnalyzeGeoJSONView.as_view(), name='analyze-geojson'),
+    path('task-status/<str:task_id>/', TaskStatusView.as_view(), name='task-status'),
+    path('data-stats/', get_data_stats, name='data-stats'),
+
+    #path('biomass-stats/', BiomassStatsListView.as_view(), name='biomass-stats-list'),
 ]
+
+urlpatterns += router.urls
