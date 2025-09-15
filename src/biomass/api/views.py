@@ -26,8 +26,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from sklearn.linear_model import LinearRegression
 import numpy as np
+import os
 
 User= get_user_model()
+frontend_url = os.getenv('FRONTEND_URL')
+print("Frontend URL:", frontend_url)
 
 class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -52,7 +55,7 @@ def google_login_callback(request):
 
     if not social_account:
         print("No social account found for user:", user)
-        return redirect('http://localhost:5173/login/callback/?error=NoSocialAccount')
+        return redirect(f'{frontend_url}/login/callback/?error=NoSocialAccount')
     
     social_token = SocialToken.objects.filter(account=social_account, account__provider='google').first()
     
@@ -62,10 +65,10 @@ def google_login_callback(request):
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
 
-        return redirect(f'http://localhost:5173/login/callback/?access_token={access_token}')
+        return redirect(f'{frontend_url}/login/callback/?access_token={access_token}')
     else:
         print("No Google social token found for user:", user)
-        return redirect('http://localhost:5173/login/callback/?error=NoGoogleToken')
+        return redirect(f'{frontend_url}/login/callback/?error=NoGoogleToken')
 
 @csrf_exempt
 def validate_google_token(request):
