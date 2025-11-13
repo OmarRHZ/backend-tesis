@@ -3,12 +3,21 @@ from django.contrib.auth.models import User  # Importas el modelo existente
 from django.contrib.gis.db import models as gis_models
 
 class AOI(models.Model):
+    STATUS_CHOICES = [
+        ('analysing', 'Analysing'),
+        ('completed', 'Completed'),
+        ('error', 'Error'),
+    ]
+    
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     file_path = models.TextField(blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     geometry = gis_models.PolygonField(null=True, blank=True, srid=4326)  # PostGIS field
     task_id = models.CharField(max_length=250, null=True, blank=True)
+    favorite = models.BooleanField(default=False)
+    share_token = models.CharField(max_length=64, null=True, blank=True, unique=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='analysing')
 
 class BiomassStats(models.Model):
     aoi = models.ForeignKey(AOI, on_delete=models.CASCADE)

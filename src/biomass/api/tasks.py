@@ -96,6 +96,10 @@ def analyze_geojson_task(self, geojson_data, user_id, aoi_id):
             }
         )
         
+        # Actualizar status del AOI a 'completed'
+        aoi.status = 'completed'
+        aoi.save()
+        
         return {
             'aoi_id': aoi_id,
             'name': aoi.name,
@@ -103,6 +107,14 @@ def analyze_geojson_task(self, geojson_data, user_id, aoi_id):
         }
         
     except Exception as e:
+        # En caso de error, actualizar status del AOI a 'error'
+        try:
+            aoi = AOI.objects.get(id=aoi_id)
+            aoi.status = 'error'
+            aoi.save()
+        except:
+            pass
+        
         # En caso de error
         self.update_state(
             state='FAILURE',

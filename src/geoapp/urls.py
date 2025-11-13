@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from biomass.api.views import *
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -34,6 +35,13 @@ urlpatterns = [
     path('callback/', google_login_callback, name='callback'),
     path('api/auth/user/', UserDetailView.as_view(), name='user-detail'),
     path('api/google/validate-token/', validate_google_token, name='validate-token'),
+    #path('api/password/reset/request/', PasswordResetRequestView.as_view(), name='password-reset-request'),
+    #path('api/password/reset/confirm/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
+    path('api/reset-password/', auth_views.PasswordResetView.as_view(), name='reset-password'),
+    path('api/reset-password/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('api/reset-password/confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('api/reset-password/complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
 ]
 
 urlpatterns += router.urls
